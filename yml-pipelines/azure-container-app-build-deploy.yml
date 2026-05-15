@@ -28,7 +28,25 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    # No build step needed — image is already built and pushed to Docker Hub
+
+    - script: |
+        echo "=========================================="
+        echo "  DEPLOYMENT SUMMARY"
+        echo "=========================================="
+        echo "  Image          : $(DOCKER_IMAGE)"
+        echo "  Tag            : $(IMAGE_TAG)"
+        echo "  Full Image     : docker.io/$(DOCKER_IMAGE):$(IMAGE_TAG)"
+        echo "  Target App     : $(CONTAINER_APP_NAME)"
+        echo "  Resource Group : $(RESOURCE_GROUP)"
+        echo "  Location       : $(LOCATION)"
+        echo "  Environment    : $(ENVIRONMENT_NAME)"
+        echo "=========================================="
+      displayName: Print Deployment Summary
+
+    - script: |
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        trivy image --exit-code 1 --severity CRITICAL docker.io/$(DOCKER_IMAGE):$(IMAGE_TAG)
+      displayName: Trivy Security Scan
 
 - stage: DeployToStaging
   displayName: Deploy to Staging Stage
