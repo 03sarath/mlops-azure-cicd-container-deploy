@@ -76,7 +76,7 @@ stages:
     - task: AzureCLI@2
       displayName: Deploy Container App (Staging)
       inputs:
-        azureSubscription: 'your-azure-service-connection'
+        azureSubscription: 'Azure-ARM-my-ai-cv'
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
